@@ -1,0 +1,231 @@
+<?xml version="1.0"?>
+<run>
+<tool>
+  <id>complam</id>
+  <name>Composite Laminate Analysis</name>
+  <version>
+    <identifier>1.2x</identifier>
+    <application>
+      <revision>35</revision>
+      <modified>2016-04-20 02:31:05 -0400 (Wed, 20 Apr 2016)</modified>
+      <installed>2016-04-20 10:49:18 EDT</installed>
+      <directory id="top">/apps/complam/r35</directory>
+      <directory id="tool">/apps/complam/r35/rappture</directory>
+    </application>
+  </version>
+  <title>Classical Laminate Plate Theory</title>
+  <command>run_main_clpt.sh @driver</command>
+  <uq> 1 </uq>
+</tool>
+<input>
+  <!-- This group of groups is drawn as a set of tabs -->
+  <group id="tabs">
+      <group id="Material">
+        <about> <label>Material</label> </about>
+        
+        <number id="E1">
+            <about>
+                <label>E1</label>
+                <description>Longitudinal Young's Modulus</description>
+            </about>
+            <units>GPa</units>
+            <min>0.0GPa</min>
+            <max>500GPa</max>
+            <default>138GPa</default>
+        </number>
+        
+        <number id="E2">
+            <about>
+                <label>E2</label>
+                <description>Transverse Young's Modulus In-Plane</description>
+            </about>
+            <units>GPa</units>
+            <min>0.0GPa</min>
+            <max>500GPa</max>
+            <default>14.5GPa</default>
+        </number>
+        
+        <number id="nu12">
+            <about>
+                <label>nu12</label>
+                <description>Major In-Plane Poisson's Ratio</description>
+            </about>
+            <units></units>
+            <min>-1.0</min>
+            <max>0.5</max>
+            <default>0.21</default>
+        </number>
+        
+        <number id="G12">
+            <about>
+                <label>G12</label>
+                <description>Major In-Plane Shear Modulus</description>
+            </about>
+            <units>GPa</units>
+            <min>0.0GPa</min>
+            <max>500GPa</max>
+            <default>5.86</default>
+        </number>
+        
+        <number id="alpha1">
+            <about>
+                <label>alpha1</label>
+                <description>Longitudinal Thermal Expansion Coefficient</description>
+            </about>
+            <units></units>
+            <min>-10e-6</min>
+            <max>100e-6</max>
+            <default>1e-6</default>
+        </number>
+        
+        <number id="alpha2">
+            <about>
+                <label>alpha2</label>
+                <description>Transverse Thermal Expansion Coefficient</description>
+            </about>
+            <units></units>
+            <min>-10e-6</min>
+            <max>100e-6</max>
+            <default>30e-6</default>        
+        </number>              
+      </group>
+      
+      
+      <group id="Layup">
+          <about> <label>Layup</label> </about>    
+                  
+          <number id="h0">
+            <about>
+                <label>h0</label>
+                <description>Lamina Thickenss</description>
+            </about>
+            <units>m</units>
+            <min>0m</min>
+            <max>10e-3m</max>
+            <default>0.2286mm</default>        
+        </number>  
+        
+        <string id="theta">
+            <about>
+                <label>theta</label>
+                <description>Lamina Angle</description>
+            </about>
+            <default>[45,-45,-45,45]</default>        
+        </string>          
+          
+      </group>
+      <group id="Loading">
+          <about> <label>Loading</label> </about>
+          <number id="Nx">
+              <about>
+                  <label>Nx</label>
+                  <description>Applied Normal Edge Force in X-Direction</description>
+              </about>
+              <units>N/m</units>
+              <min>-10000N/m</min>
+              <max>10000N/m</max>
+              <default>0N/m</default>  
+          </number>
+	  
+	  <number id="Ny">
+              <about>
+                  <label>Ny</label>
+                  <description>Applied Normal Edge Force in Y-Direction</description>
+              </about>
+              <units>N/m</units>
+              <min>-10000N/m</min>
+              <max>10000N/m</max>
+              <default>0N/m</default>  
+          </number>
+          
+          <number id="Nxy">
+              <about>
+                  <label>Nxy</label>
+                  <description>Applied Edge Shear Force in XY-Direction</description>
+              </about>
+              <units>N/m</units>
+              <min>-10000N/m</min>
+              <max>10000N/m</max>
+              <default>0N/m</default>  
+          </number>
+	  
+	      <number id="Mx">
+              <about>
+                  <label>Mx</label>
+                  <description>Applied Bending Moment about X-Axis</description>
+              </about>
+              <units>N</units>
+              <min>-10000N</min>
+              <max>10000N</max>
+              <default>0N</default>  
+          </number>
+	  	  
+          <number id="My">
+              <about>
+                  <label>My</label>
+                  <description>Applied Bending Moment about Y-Axis</description>
+              </about>
+              <units>N</units>
+              <min>-10000N</min>
+              <max>10000N</max>
+              <default>0N</default>  
+          </number>
+	  	  
+          <number id="Mxy">
+              <about>
+                  <label>Mxy</label>
+                  <description>Applied Twisting Moment</description>
+              </about>
+              <units>N</units>
+              <min>-10000N</min>
+              <max>10000N</max>
+              <default>0N</default>
+          </number>
+	  
+          <number id="Ti">
+              <about>
+                  <label>Ti</label>
+                  <description>Initial Temperature</description>
+              </about>
+              <units>C</units>
+              <min>-273.15C</min>
+              <max>500C</max>
+              <default>0C</default>  
+          </number>
+          
+          <number id="Tf">
+              <about>
+                  <label>Tf</label>
+                  <description>Final Temperature</description>
+              </about>
+              <units>C</units>
+              <min>-273.15C</min>
+              <max>500C</max>
+              <default>0C</default>  
+          </number>
+          <!--
+          <integer id="xRes">
+              <about>
+                  <label>xRes</label>
+                  <description>Number of points in the x-direction where the solution will be evaluated</description>
+              </about>
+              <min>10</min>
+              <max>1001</max>
+              <default>51</default>  
+          </integer>
+	  
+          <integer id="yRes">
+              <about>
+                  <label>yRes</label>
+                  <description>Number of points in the y-direction where the solution will be evaluated</description>
+              </about>
+              <min>10</min>
+              <max>1001</max>
+              <default>51</default>  
+          </integer>
+          -->
+          
+      </group>
+  </group>
+</input>
+</run>

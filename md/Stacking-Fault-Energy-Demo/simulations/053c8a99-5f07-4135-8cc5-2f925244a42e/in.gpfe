@@ -1,0 +1,48 @@
+# ---------- Initialization ----------
+units metal
+boundary p p m
+atom_style atomic
+# ---------- Atomic configuration ----------
+# NOTICE:
+# Equilibrium lattice constant (4.05 here) is unique to the chosen interatomic potential.
+lattice fcc 4.05 orient x 0 -1 1 orient y 2 -1 -1 orient z 1 1 1 origin 0.01 0.01 0.01 spacing 1.414214 2.449490 1.732051
+region box block 0 1 0 1 0 6
+region r1  block 0 1 0 1 0 3
+region r2  block 0 1 0 1 3 6
+create_box 1 box
+create_atoms 1 box
+group g2 region r2
+# ---------- Interatomic potential ----------
+pair_style meam
+pair_coeff * * ../../Jelinek_2012_meamf AlS ../../Jelinek_2012_meam.alsimgcufe AlS
+# ---------- Variables to write to LAMMPS output file ----------
+variable PE equal pe
+variable LX equal lx
+variable LY equal ly
+variable LZ equal lz
+variable PXX equal pxx
+variable PYY equal pyy
+variable PZZ equal pzz
+variable PYZ equal pyz
+variable PXZ equal pxz
+variable PXY equal pxy
+variable nAtoms equal count(all)
+thermo 1000
+thermo_style custom step temp pe ke etotal lx ly lz pxx pyy pzz pyz pxz pxy
+# ---------- Minimization details ----------
+min_style sd
+fix relaxz all setforce 0.0 0.0 NULL
+# ---------- Minimize single crystal (causes surface relaxation) ----------
+minimize 0.0 1.0e-12 10000 100000
+# ---------- Write thermodynamic information to file ----------
+fix print all print 1 "${nAtoms} ${PE} ${LX} ${LY} ${LZ} ${PXX} ${PYY} ${PZZ} ${PYZ} ${PXZ} ${PXY}" file data.0.txt
+run 1
+unfix print
+# ---------- Apply relative displacement ----------
+displace_atoms g2 move 0.0 0.000000 0.0
+# ---------- Minimize faulted crystal (causes interface relaxation) ----------
+minimize 0.0 1.0e-12 10000 100000
+# ---------- Write thermodynamic information to file ----------
+fix print all print 1 "${nAtoms} ${PE} ${LX} ${LY} ${LZ} ${PXX} ${PYY} ${PZZ} ${PYZ} ${PXZ} ${PXY}" file data.1.txt
+run 1
+unfix print

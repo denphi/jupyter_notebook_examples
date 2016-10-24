@@ -1,0 +1,11 @@
+function [xi,yi,zi,xf,yf,zf] = calcDisp(midStrain,xRes,yRes)
+    xi = -1:2/xRes:1;
+    yi = -1:2/yRes:1;
+    [xi,yi]=meshgrid(xi,yi);                      % Make a grid in the xy plane
+    zi=zeros(size(xi));                                   % Initial z-height is 0
+    dx=midStrain(1)*xi+midStrain(3)/2*yi;                           % Change in x direction
+    dy=midStrain(2)*yi+midStrain(3)/2*xi;                           % Change in y direction
+    dz=-midStrain(4)*xi.^2/2-midStrain(5)*yi.^2/2-2*midStrain(6)*xi.*yi;   % Change in z direction
+    xf=xi+dx;                                            % Final x locations
+    yf=yi+dy;                                            % Final y locations
+    zf=zi+dz;                                            % Final z locations
