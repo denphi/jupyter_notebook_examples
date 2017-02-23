@@ -1,0 +1,47 @@
+
+bindir          = @bindir@
+datadir		= @datadir@
+datarootdir	= @datarootdir@
+exec_prefix     = @exec_prefix@
+includedir      = @includedir@
+libdir          = @libdir@
+mandir          = @mandir@
+srcdir		= @srcdir@
+prefix          = @prefix@
+
+INSTALL		= @INSTALL@
+MKDIR_P		= @MKDIR_P@
+VPATH		= $(srcdir)
+RM		= rm -f
+
+FILES		= \
+		$(srcdir)/image.py \
+		$(srcdir)/image.tcl \
+		$(srcdir)/image1.gif \
+		$(srcdir)/image2.gif \
+		$(srcdir)/tool.xml 
+
+destdir		= $(prefix)/examples/zoo/image
+
+.PHONY: all install clean distclean 
+
+all: 
+	$(MAKE) -C examples all
+	$(MAKE) -C docs all
+
+install: 
+	$(MKDIR_P) -m 0755 $(destdir)
+	for i in $(FILES) ; do \
+	  $(INSTALL) -m 0444  $$i $(destdir) ; \
+	done
+	$(MAKE) -C examples install
+	$(MAKE) -C docs install
+
+clean:
+	$(MAKE) -C examples clean
+	$(MAKE) -C docs clean
+
+distclean: 
+	$(MAKE) -C examples distclean
+	$(MAKE) -C docs distclean
+	$(RM) Makefile *~
