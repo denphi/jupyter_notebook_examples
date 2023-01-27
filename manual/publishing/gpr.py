@@ -1,8 +1,8 @@
 import warnings
 warnings.simplefilter(action="ignore", category=UserWarning)
-import GPy
 import numpy as np
-
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 
 class GPR:
 
@@ -24,13 +24,12 @@ class GPR:
         :param x:               The observed inputs (1D `np.ndarray`)
         :param y:               The observed outputs (1D `np.ndarray`).
         """
-        self.x = GPR._check_and_regularize_1d_array(x)
-        self.y = GPR._check_and_regularize_1d_array(y)
+        self.x = x.to_numpy().reshape(-1, 1) 
+        self.y = y.to_numpy().reshape(-1, 1) 
 
     def run(self, variance=1.,
             length_scale=1.,
-            noise_variance=1e-3,
-            optimize=False, plot=True):
+            noise_variance=1):
         """
         Perform 1D regression.
         :param variance:        The signal strength of the square exponential
@@ -38,42 +37,29 @@ class GPR:
         :param length_scale:    The length scale of the square
                             exponential covariance function (positive float).
         :param noise_variance:  The noise of the model (non-negative float).
-        :param optimize:        If `True` then the model is optimized
-                                by maximizing the marginal likelihood
-                                with respect to the hyper-parameters (bool).
         :returns:               A dictionary containing the following elements:
-                                    + x_eval:       points on which the predictive
+                                    + x:       points on which the predictive
                                                     distribution is actually evaluated
                                                     (1D `np.ndarray`)
-                                    + y_mu:         the mean of the predictive distribution
+                                    + y:         points target on which the predictive
+                                                    distribution is actually evaluated
+                                                    (1D `np.ndarray`)
                                                     (1D `np.ndarray` of size x_eval.shape[0])
-                                    + y_var:        the predictive variance
-                                                    (1D `np.ndarray` of size x_eval.shape[0])
-                                    + y_025:        the 2.5% lower quantile of the predictive
-                                                    distribution of the GP
-                                                    (1D `np.ndarray` of size x_eval.shape[0])
-                                    + y_975:        the 97.5% lower quantile of the predictive
-                                                    distribution of the GP
-                                                    (1D `np.ndarray` of size x_eval.shape[0])
-                                    + y_s:          samples from the predictive distribution
-                                                    of the Gaussian process
-                                                    (2D `np.ndarray` of size
-                                                     num_samples x x_eval.shape[0])
-                                    + model:        the trained gaussian process model
+                                    + y_mean:        Mean of predictive distribution a query points.
+                                    + y_std:        Standard deviation of predictive distribution at query points
+                                    + k:          The kernel
+                                    + gpr:        the trained gaussian process model
         """
         variance = float(variance)
         length_scale = float(length_scale)
         noise_variance = float(noise_variance)
-        optimize = bool(optimize)
 
-        k = GPy.kern.RBF(input_dim=1, lengthscale=length_scale, variance=variance)
-
-        model = GPy.models.GPRegression(self.x, self.y, k)
-        model.Gaussian_noise.variance = noise_variance
-        if optimize:
-            model.optimize(messages=False)
-        if plot:
-            model.plot()
-        else:
-            return model
+        k = 1.0 * RBF(length_scale=length_scale, length_scale_bounds=(1e-2, 1e3)) + WhiteKernel(
+            noise_level=noise_variance, noise_level_bounds=(1e-5, 1e1)
+        )
+        gpr = GaussianProcessRegressor(kernel=k, alpha=0.0)
+        gpr.fit(self.x, self.y)
+        y_mean, y_std = gpr.predict(self.x, return_std=True)
+        
+        return self.x, self.y, y_mean, y_std, gpr, k
 
